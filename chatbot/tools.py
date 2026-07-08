@@ -1,32 +1,26 @@
 import google.generativeai as genai
-import os
-from dotenv import load_dotenv
-import requests
-
-load_dotenv()
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 ##Tools Definitions
 read_temp_func = genai.protos.FunctionDeclaration(
     name = "read_temp",
     description = "Read the current temperature",
-    parameters = {"type" : "object", "properties": {}}
+    parameters = {"type" : "OBJECT", "properties": {}}
 )
-tool = genai.protos.Tool(function_decleration=[read_temp_func])
+
 
 read_light_func = genai.protos.FunctionDeclaration(
     name = "read_light",
-    description = "Read the current temperature",
-    parameters = {"type" : "object", "properties": {}}
+    description = "Read the current light level",
+    parameters = {"type" : "OBJECT", "properties": {}}
 )
-tool = genai.protos.Tool(function_decleration=[read_light_func])
+
 
 all_off_func = genai.protos.FunctionDeclaration(
     name="all_off",
     description=("Turns off every tool"),
-    parameters={"type": "object","properties": {}}
+    parameters={"type": "OBJECT","properties": {}}
 )
-tool = genai.protos.Tool(function_declarations=[all_off_func])
+
 
 set_rgb_func = genai.protos.FunctionDeclaration(
     name="set_rgb",
@@ -34,25 +28,25 @@ set_rgb_func = genai.protos.FunctionDeclaration(
         "Controls the RGB LED"
     ),
     parameters={
-        "type": "object",
+        "type": "OBJECT",
         "properties": {
             "red": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Red value"
             },
             "green": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Green value"
             },
             "blue": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Blue value"
-            },
+            }
         },
         "required": ["red", "green", "blue"]
     }
 )
-tool = genai.protos.Tool(function_declarations=[set_rgb_func])
+
 
 fade_rgb_func = genai.protos.FunctionDeclaration(
     name="fade_rgb",
@@ -60,29 +54,29 @@ fade_rgb_func = genai.protos.FunctionDeclaration(
         "Uses PWM controlled pin for the fade effect on RGB LED."
     ),
     parameters={
-        "type": "object",
+        "type": "OBJECT",
         "properties": {
             "red": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Red value"
             },
             "green": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Green value"
             },
             "blue": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Blue value"
             },
             "duration_ms": {
-                "type": "int",
+                "type": "INTEGER",
                 "description": "Time between fading values."
             }
         },
         "required": ["red", "green", "blue", "duration_ms"]
     }
 )
-tool = genai.protos.Tool(function_declarations=[set_rgb_func])
+
 
 alert_func = genai.protos.FunctionDeclaration(
     name="alert",
@@ -90,22 +84,22 @@ alert_func = genai.protos.FunctionDeclaration(
         "Uses the active buzzer to play an alarm"
     ),
     parameters={
-        "type": "object",
+        "type": "OBJECT",
         "properties": {
             "pattern": {
-                "type": "string",
+                "type": "STRING",
                 "enum": ["short", "long", "double_beep"],
                 "description": "The buzzer pattern"
             },
             "repeat_count": {
-                "type": "integer",
+                "type": "INTEGER",
                 "description": "Number of times to repeat the pattern. Defaults to 1."
             }
         },
         "required": ["pattern"] #only pattern is required
     }
 )
-tool = genai.protos.Tool(function_declarations=[alert_func])
+
 
 write_display_func = genai.protos.FunctionDeclaration(
     name="write_display",
@@ -113,16 +107,16 @@ write_display_func = genai.protos.FunctionDeclaration(
         "Writes text to a LCD display with 4 rows."
     ),
     parameters={
-        "type": "object",
+        "type": "OBJECT",
         "properties": {
-            "text": {"type": "string", "description": "Text to display"},
-            "row": {"type": "integer", "description": "Row number (1-4) to write to. Defaults to row 1."},
-            "clear": {"type": "boolean", "description": "Think of this as an writing 'fresh(true)' or 'appending(false)'. Defaults to false."}
+            "text": {"type": "STRING", "description": "Text to display"},
+            "row": {"type": "INTEGER", "description": "Row number (1-4) to write to. Defaults to row 1."},
+            "clear": {"type": "BOOLEAN", "description": "Think of this as an writing 'fresh(true)' or 'appending(false)'. Defaults to false."}
         },
         "required": ["text"]
     }
 )
-tool = genai.protos.Tool(function_declarations=[write_display_func])
+
 
 play_tune_func = genai.protos.FunctionDeclaration(
     name="play_tune",
@@ -130,23 +124,23 @@ play_tune_func = genai.protos.FunctionDeclaration(
         "Plays a tune on the passive buzzer."
     ),
     parameters={
-        "type": "object",
+        "type": "OBJECT",
         "properties": {
             "notes": {
-                "type": "array",
-                "items": {"type": "integer"},
+                "type": "ARRAY",
+                "items": {"type": "INTEGER"},
                 "description": "Sequence of note frequencies in Hz (e.g. [262, 294, 330] for C4, D4, E4)"
             },
             "durations": {
-                "type": "array",
-                "items": {"type": "integer"},
+                "type": "ARRAY",
+                "items": {"type": "INTEGER"},
                 "description": "Duration in milliseconds for each corresponding note"
             }
         },
         "required": ["notes", "durations"]
     }
 )
-tool = genai.protos.Tool(function_declarations=[play_tune_func])
+
 
 set_led_func = genai.protos.FunctionDeclaration(
     name="set_led",
@@ -154,35 +148,42 @@ set_led_func = genai.protos.FunctionDeclaration(
         "Controls one of the individual single-color LEDs (red, blue, yellow, or white). "
     ),
     parameters={
-        "type": "object",
+        "type": "OBJECT",
         "properties": {
             "led_color": {
-                "type": "string",
+                "type": "STRING",
                 "enum": ["red", "blue", "yellow", "white"],
                 "description": "Which LED to control"
             },
             "state": {
-                "type": "string",
+                "type": "STRING",
                 "enum": ["on", "off"],
                 "description": "Whether the LED should be on or off"
             },
             "count": {
-                "type": "integer",
+                "type": "INTEGER",
                 "description": "Number of times to blink. Omit for a steady on/off."
             },
             "interval_ms": {
-                "type": "integer",
+                "type": "INTEGER",
                 "description": "Delay in milliseconds between blinks. Only relevant if count is provided."
             }
         },
         "required": ["led_color", "state"]
     }
 )
-tool = genai.protos.Tool(function_declarations=[set_led_func])
 
 
-
-##Model Decleration
-model = genai.GenerativeModel("gemini-2.5-flash", tool=[tool])
-
-##dispatch function
+esp_tools = genai.protos.Tool(
+    function_declarations=[
+        read_temp_func,
+        read_light_func,
+        all_off_func,
+        set_rgb_func,
+        fade_rgb_func,
+        alert_func,
+        write_display_func,
+        play_tune_func,
+        set_led_func,
+    ]
+)
