@@ -1,0 +1,10 @@
+For the initial release of this project, I had to which LLM to support when the user inputs their API key.
+In the end, I allowed the user to input their Gemini API key instead of something like OpenAI or Claude/Anthropic key.
+
+Why use Gemini? There's a couple of reasons.
+    1. A user is able to get a free Gemini API key (no billing involved).
+    2. Gemini seemed to have well defined docs with simple function calls. It was easily accessabled via CodeLabs.
+    3. Model performance is not a priority. High level reasoning isn't the goal of this project.
+
+Tools used:
+google-generativeai
