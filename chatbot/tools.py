@@ -1,28 +1,28 @@
-import google.generativeai as genai
+from google.genai import types
 
 ##Tools Definitions
-read_temp_func = genai.protos.FunctionDeclaration(
+read_temp_func = types.FunctionDeclaration(
     name = "read_temp",
     description = "Read the current temperature",
     parameters = {"type" : "OBJECT", "properties": {}}
 )
 
 
-read_light_func = genai.protos.FunctionDeclaration(
+read_light_func = types.FunctionDeclaration(
     name = "read_light",
     description = "Read the current light level",
     parameters = {"type" : "OBJECT", "properties": {}}
 )
 
 
-all_off_func = genai.protos.FunctionDeclaration(
+all_off_func = types.FunctionDeclaration(
     name="all_off",
     description=("Turns off every tool"),
     parameters={"type": "OBJECT","properties": {}}
 )
 
 
-set_rgb_func = genai.protos.FunctionDeclaration(
+set_rgb_func = types.FunctionDeclaration(
     name="set_rgb",
     description=(
         "Controls the RGB LED"
@@ -48,7 +48,7 @@ set_rgb_func = genai.protos.FunctionDeclaration(
 )
 
 
-fade_rgb_func = genai.protos.FunctionDeclaration(
+fade_rgb_func = types.FunctionDeclaration(
     name="fade_rgb",
     description=(
         "Uses PWM controlled pin for the fade effect on RGB LED."
@@ -78,7 +78,7 @@ fade_rgb_func = genai.protos.FunctionDeclaration(
 )
 
 
-alert_func = genai.protos.FunctionDeclaration(
+alert_func = types.FunctionDeclaration(
     name="alert",
     description=(
         "Uses the active buzzer to play an alarm"
@@ -101,7 +101,7 @@ alert_func = genai.protos.FunctionDeclaration(
 )
 
 
-write_display_func = genai.protos.FunctionDeclaration(
+write_display_func = types.FunctionDeclaration(
     name="write_display",
     description=(
         "Writes text to a LCD display with 4 rows."
@@ -118,7 +118,7 @@ write_display_func = genai.protos.FunctionDeclaration(
 )
 
 
-play_tune_func = genai.protos.FunctionDeclaration(
+play_tune_func = types.FunctionDeclaration(
     name="play_tune",
     description=(
         "Plays a tune on the passive buzzer."
@@ -142,7 +142,7 @@ play_tune_func = genai.protos.FunctionDeclaration(
 )
 
 
-set_led_func = genai.protos.FunctionDeclaration(
+set_led_func = types.FunctionDeclaration(
     name="set_led",
     description=(
         "Controls one of the individual single-color LEDs (red, blue, yellow, or white). "
@@ -174,7 +174,7 @@ set_led_func = genai.protos.FunctionDeclaration(
 )
 
 
-esp_tools = genai.protos.Tool(
+esp_tools = types.Tool(
     function_declarations=[
         read_temp_func,
         read_light_func,

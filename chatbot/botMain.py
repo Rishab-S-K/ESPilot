@@ -2,17 +2,18 @@ import os
 import requests
 from tools import esp_tools
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 load_dotenv()
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+ESP32_IP = os.environ["ESP32_IP"]
 
 
 ##Model Decleration
-model = genai.GenerativeModel(
-    "gemini-2.5-flash",
+config = types.GenerateContentConfig(
     tools=[esp_tools],
-    generation_config=genai.GenerationConfig(temperature=0.7),
+    temperature=0.7,
     system_instruction=(
         "You are ESPilot, a chatbot that is able to control a ESP32-controlled breadboard. "
         "The breadboard has LEDS (red, yellow, blue, green, white), an RGB LED, temperature "
@@ -41,7 +42,7 @@ def act(name, args):
     except requests.exceptions.RequestException as exception:
         return {"status": "error", "message": str(exception)}
     
-chat = model.start_chat()
+chat = client.chats.create(model="gemini-2.5-flash", config=config)
 
 
 ##Chat Loop
@@ -56,18 +57,15 @@ while True:
     while True:
         part = response.candidates[0].content.parts[0]
 
-        if part.function_call.name: #if its a function call, continue
+        if part.function_call: #if its a function call, continue
             func_name = part.function_call.name
             func_args = part.function_call.args
             result = act(func_name, func_args)
 
             #get a reply back after executing what the user wanted
             response = chat.send_message(
-                genai.protos.Content(parts=[genai.protos.Part(
-                    function_response=genai.protos.FunctionResponse(name=func_name, response=result)
-                )])
+                types.Part.from_function_response(name=func_name, response=result)
             )
         else: #otherwise stop
             break
     print("AI:", response.text)
-
